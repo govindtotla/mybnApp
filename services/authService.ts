@@ -6,7 +6,7 @@ import { Platform } from 'react-native';
 
 const GOOGLE_CONFIG = {
   iosClientId: 'YOUR_IOS_CLIENT_ID',
-  androidClientId: '634953531685-3pen2rkict1ns0kem66nksk7otubt4dk.apps.googleusercontent.com',
+  androidClientId: 'YOUR_ANDROID_CLIENT_ID',
   scopes: ['profile', 'email'],
 };
 
