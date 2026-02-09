@@ -8,20 +8,14 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleSignInButton() {
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '634953531685-3pen2rkict1ns0kem66nksk7otubt4dk.apps.googleusercontent.com',
+    androidClientId: 'ANDROID_CLIENT_ID',
     // iosClientId: 'IOS_CLIENT_ID',
-    webClientId: '634953531685-i1pblgdr6324o8tmlrv475ln13s4n3je.apps.googleusercontent.com',
+    webClientId: 'WEB_CLIENT_ID',
     scopes: ['profile', 'email'],
     extraParams: {
       prompt: 'consent select_account',
     },
   });
-
-  // const redirectUri = AuthSession.makeRedirectUri({
-  //   useProxy: true,
-  // });
-
-  // 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   webClient secret
 
   // This runs AFTER Google login completes
   useEffect(() => {
