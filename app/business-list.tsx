@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  BackHandler,
   FlatList,
   Modal,
   RefreshControl,
@@ -10,7 +11,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BusinessCard from '../components/BusinessCard';
@@ -43,6 +44,23 @@ const BusinessListScreen = () => {
   useEffect(() => {
     filterBusinesses();
   }, [searchQuery, selectedCategory, businesses]);
+
+  useEffect(() => {
+    // Handle back button press
+    const backAction = () => {
+      router.replace('/welcome')
+      return true; // Prevent default back behavior
+    };
+
+    // Add event listener
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    // Cleanup
+    return () => backHandler.remove();
+  }, []);
 
   const loadBusinesses = async (pageToLoad: number = 1, reset: boolean = false) => {
     try {
@@ -104,7 +122,8 @@ const BusinessListScreen = () => {
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
-    loadBusinesses();
+    // Reset pagination state and reload from page 1
+    loadBusinesses(1, true);
   }, []);
 
   const handleBusinessPress = (business: Business) => {

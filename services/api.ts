@@ -29,20 +29,15 @@ export const businessService = {
       // For demo purposes, using mock data
       // In production, replace with:
       const response = await api.get(API_CONFIG.ENDPOINTS.BUSINESSES, {
-        params: { _page: page, _limit: limit }
+        params: { page: page, per_page: limit }
       });
       const BUSINESSES = response.data.data;
-
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedItems = BUSINESSES.slice(startIndex, endIndex);
-
       return {
-        items: paginatedItems,
+        items: BUSINESSES,
         page,
         limit,
-        total: BUSINESSES.length,
-        totalPages: Math.ceil(BUSINESSES.length / limit),
+        total: response.data.pagination.total,
+        totalPages: response.data.pagination.last_page,
       };
     } catch (error) {
       console.error('Error fetching businesses:', error);
