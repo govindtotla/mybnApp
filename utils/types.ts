@@ -14,6 +14,7 @@ export interface Business {
     gender: string;
     description: string;
     phone: number;
+    email: string;
     facebook_page: string;
     instagram: string;
     google_url: string;

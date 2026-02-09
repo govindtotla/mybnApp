@@ -92,7 +92,7 @@ const BusinessDetailScreen = () => {
     });
 
     const latLng = `${lat},${lng}`;
-    const label = encodeURIComponent(business.name);
+    const label = encodeURIComponent(business.business_name);
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`,
@@ -116,15 +116,15 @@ const BusinessDetailScreen = () => {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Ionicons key={i} name="star" size={20} color="#FFD700" />
+          <Ionicons name="star" size={20} color="#FFD700" />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
-          <Ionicons key={i} name="star-half" size={20} color="#FFD700" />
+          <Ionicons name="star-half" size={20} color="#FFD700" />
         );
       } else {
         stars.push(
-          <Ionicons key={i} name="star-outline" size={20} color="#FFD700" />
+          <Ionicons name="star-outline" size={20} color="#FFD700" />
         );
       }
     }
@@ -305,7 +305,7 @@ const BusinessDetailScreen = () => {
                       latitude: business.latitude,
                       longitude: business.longitude,
                     }}
-                    title={business.name}
+                    title={business.business_name}
                     description={business.address}
                   />
                 </MapView>

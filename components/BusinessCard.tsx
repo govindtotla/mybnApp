@@ -37,15 +37,15 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business, onPress }) => {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Ionicons key={i} name="star" size={16} color="#FFD700" />
+          <Ionicons name="star" size={16} color="#FFD700" />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
-          <Ionicons key={i} name="star-half" size={16} color="#FFD700" />
+          <Ionicons name="star-half" size={16} color="#FFD700" />
         );
       } else {
         stars.push(
-          <Ionicons key={i} name="star-outline" size={16} color="#FFD700" />
+          <Ionicons name="star-outline" size={16} color="#FFD700" />
         );
       }
     }

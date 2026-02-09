@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +26,13 @@
         "ACCESS_NETWORK_STATE"
       ],
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "config": {
+        "googleSignIn": {
+          "apiKey": "YOUR_API_KEY",
+          "certificateHash": "YOUR_SHA1_HASH"
+        }
+      }
     },
     "web": {
       "output": "static",

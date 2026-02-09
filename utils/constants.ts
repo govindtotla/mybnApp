@@ -35,6 +35,7 @@ export const API_CONFIG = {
     success: '#00B894',
     warning: '#FDCB6E',
     error: '#E17055',
+    white: '#FFFFFF',
     gradient: {
       start: '#4A90E2',
       end: '#50C878',

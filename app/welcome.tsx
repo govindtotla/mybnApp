@@ -40,7 +40,7 @@ const WelcomeScreen = () => {
   ];
 
   const handleGetStarted = () => {
-    router.replace('/business-list');
+    router.replace('/(auth)/signup');
   };
 
   return (
