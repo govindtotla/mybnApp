@@ -4,9 +4,19 @@ import * as Google from 'expo-auth-session/providers/google';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
+// Check if SecureStore is available
+const isSecureStoreAvailable = () => {
+  try {
+    return SecureStore && typeof SecureStore.getItemAsync === 'function';
+  } catch {
+    return false;
+  }
+};
+
 const GOOGLE_CONFIG = {
-  iosClientId: '',
-  androidClientId: '',
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS || '',
+  androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID || '',
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB || '',
   scopes: ['profile', 'email'],
 };
 
@@ -91,10 +101,12 @@ export const authService = {
       const config = Platform.select({
         ios: { clientId: GOOGLE_CONFIG.iosClientId },
         android: { clientId: GOOGLE_CONFIG.androidClientId },
+        web: { clientId: GOOGLE_CONFIG.webClientId },
       });
 
       if (!config?.clientId) {
-        throw new Error('Google Client ID not configured for this platform');
+        const platform = Platform.OS;
+        throw new Error(`Google Client ID not configured for ${platform} platform. Please add EXPO_PUBLIC_GOOGLE_CLIENT_ID_${platform.toUpperCase()} to your .env file`);
       }
 
       // Start Google authentication flow
@@ -134,26 +146,61 @@ export const authService = {
   // Storage helpers
   // ---------------------------
   saveUserData: async (user: User): Promise<void> => {
-    await Promise.all([
-      SecureStore.setItemAsync(STORAGE_KEYS.USER_DATA, JSON.stringify(user)),
-      SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TYPE, user.authType),
-    ]);
+    try {
+      if (!isSecureStoreAvailable()) {
+        console.warn('SecureStore is not available. User data will not be persisted. Create a development build to use SecureStore.');
+        return;
+      }
+      await Promise.all([
+        SecureStore.setItemAsync(STORAGE_KEYS.USER_DATA, JSON.stringify(user)),
+        SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TYPE, user.authType),
+      ]);
+    } catch (error: any) {
+      console.error('Error saving user data:', error);
+      if (error?.message?.includes('not a function') || error?.message?.includes('not available')) {
+        console.warn('SecureStore methods are not available. You may need to create a development build instead of using Expo Go.');
+      }
+      // Don't throw - allow app to continue without persistence
+    }
   },
 
   getCurrentUser: async (): Promise<User | null> => {
-    const data = await SecureStore.getItemAsync(STORAGE_KEYS.USER_DATA);
-    return data ? JSON.parse(data) : null;
+    try {
+      if (!isSecureStoreAvailable()) {
+        console.warn('SecureStore is not available. This may be because you are using Expo Go. SecureStore requires a development build.');
+        return null;
+      }
+      const data = await SecureStore.getItemAsync(STORAGE_KEYS.USER_DATA);
+      return data ? JSON.parse(data) : null;
+    } catch (error: any) {
+      console.error('Error getting user data:', error);
+      // Return null if SecureStore is not available (e.g., on web or Expo Go)
+      if (error?.message?.includes('not a function') || error?.message?.includes('not available')) {
+        console.warn('SecureStore methods are not available. You may need to create a development build instead of using Expo Go.');
+      }
+      return null;
+    }
   },
 
   isAuthenticated: async (): Promise<boolean> => {
-    return !!(await authService.getCurrentUser());
+    try {
+      return !!(await authService.getCurrentUser());
+    } catch (error) {
+      console.error('Error checking authentication:', error);
+      return false;
+    }
   },
 
   signOut: async (): Promise<void> => {
-    await Promise.all([
-      SecureStore.deleteItemAsync(STORAGE_KEYS.USER_DATA),
-      SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TYPE),
-    ]);
+    try {
+      await Promise.all([
+        SecureStore.deleteItemAsync(STORAGE_KEYS.USER_DATA),
+        SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TYPE),
+      ]);
+    } catch (error) {
+      console.error('Error signing out:', error);
+      // Continue even if delete fails
+    }
   },
 };
 
