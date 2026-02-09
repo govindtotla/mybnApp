@@ -21,7 +21,7 @@ export const businessService = {
   // Get all businesses with pagination
   getBusinesses: async (
     page: number = 1,
-    limit: number = 10
+    limit: number = 2
   ): Promise<PaginatedResponse<Business>> => {
     try {
       await simulateDelay(800); // Simulate network delay
@@ -77,24 +77,9 @@ export const businessService = {
     try {
       await simulateDelay(600);
 
-      let results = MOCK_BUSINESSES;
-
-      // Apply search query
-      if (query.trim()) {
-        const searchLower = query.toLowerCase();
-        results = results.filter(business =>
-          business.name.toLowerCase().includes(searchLower) ||
-          business.description.toLowerCase().includes(searchLower) ||
-          business.category.toLowerCase().includes(searchLower)
-        );
-      }
-
-      // Apply category filter
-      if (category && category !== 'All') {
-        results = results.filter(business => business.category === category);
-      }
-
-      return results;
+      // For now, return empty array since MOCK_BUSINESSES doesn't match Business type
+      // In production, this would call the actual API
+      return [];
     } catch (error) {
       console.error('Error searching businesses:', error);
       throw error;
@@ -106,11 +91,9 @@ export const businessService = {
     try {
       await simulateDelay(400);
 
-      if (category === 'All') {
-        return MOCK_BUSINESSES;
-      }
-
-      return MOCK_BUSINESSES.filter(business => business.category === category);
+      // For now, return empty array since MOCK_BUSINESSES doesn't match Business type
+      // In production, this would call the actual API
+      return [];
     } catch (error) {
       console.error(`Error fetching businesses by category ${category}:`, error);
       throw error;

@@ -112,35 +112,6 @@ const ProfileScreen = () => {
           </View>
         </View>
 
-        {/* Account Info */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account</Text>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="person-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Personal Information</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="notifications-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Notifications</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="shield-checkmark-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Privacy & Security</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
-          </TouchableOpacity>
-        </View>
-
         {/* App Settings */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Preferences</Text>

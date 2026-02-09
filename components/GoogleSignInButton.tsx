@@ -22,9 +22,6 @@ export default function GoogleSignInButton() {
     scopes: ['profile', 'email'],
     redirectUri: redirectUri,
     prompt: Platform.OS === 'android' ? [Prompt.Consent, Prompt.SelectAccount] : [Prompt.Consent],
-    extraParams: {
-      prompt: Platform.OS === 'android' ? 'consent select_account' : 'consent',
-    },
   });
 
   // This runs AFTER Google login completes

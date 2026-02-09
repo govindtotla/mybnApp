@@ -29,6 +29,10 @@ const BusinessListScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [totalBusinesses, setTotalBusinesses] = useState(0);
 
   // Load businesses on mount
   useEffect(() => {
@@ -40,17 +44,44 @@ const BusinessListScreen = () => {
     filterBusinesses();
   }, [searchQuery, selectedCategory, businesses]);
 
-  const loadBusinesses = async () => {
+  const loadBusinesses = async (pageToLoad: number = 1, reset: boolean = false) => {
     try {
-      setLoading(true);
-      const response = await businessService.getBusinesses();
-      setBusinesses(response.items);
-      setFilteredBusinesses(response.items);
+      if (reset) {
+        setLoading(true);
+        setPage(1);
+        setHasMore(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      const response = await businessService.getBusinesses(pageToLoad, 2);
+
+      if (reset) {
+        setBusinesses(response.items);
+        setFilteredBusinesses(response.items);
+        setTotalBusinesses(response.total);
+      } else {
+        setBusinesses(prev => [...prev, ...response.items]);
+        setFilteredBusinesses(prev => [...prev, ...response.items]);
+      }
+
+      if (response.items.length === 0 || pageToLoad >= response.totalPages) {
+        setHasMore(false);
+      }
     } catch (error) {
       console.error('Failed to load businesses:', error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
       setRefreshing(false);
+    }
+  };
+
+  const loadMoreBusinesses = () => {
+    if (!loadingMore && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadBusinesses(nextPage);
     }
   };
 
@@ -175,7 +206,7 @@ const BusinessListScreen = () => {
       <FlatList
         data={filteredBusinesses}
         renderItem={renderBusinessItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -186,12 +217,22 @@ const BusinessListScreen = () => {
             tintColor={COLORS.primary}
           />
         }
+        onEndReached={loadMoreBusinesses}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={renderEmptyState}
         ListFooterComponent={
-          filteredBusinesses.length > 0 ? (
+          loadingMore ? (
+            <View style={styles.loadingMoreContainer}>
+              <LoadingSpinner message="Loading more..." />
+            </View>
+          ) : !hasMore && filteredBusinesses.length > 0 ? (
+            <View style={styles.endMessageContainer}>
+              <Text style={styles.endMessageText}>You've reached the end of the list</Text>
+            </View>
+          ) : filteredBusinesses.length > 0 ? (
             <View style={styles.listFooter}>
               <Text style={styles.listFooterText}>
-                Showing {filteredBusinesses.length} of {businesses.length} businesses
+                Showing {filteredBusinesses.length} of {totalBusinesses} businesses
               </Text>
             </View>
           ) : null
@@ -337,6 +378,19 @@ const styles = StyleSheet.create({
   listFooterText: {
     fontSize: 14,
     color: COLORS.text.secondary,
+  },
+  loadingMoreContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  endMessageContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  endMessageText: {
+    fontSize: 14,
+    color: COLORS.text.secondary,
+    fontStyle: 'italic',
   },
   modalOverlay: {
     flex: 1,

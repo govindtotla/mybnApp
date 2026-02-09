@@ -20,19 +20,37 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "package": "com.devgovind.mybnapp",
+      "intentFilters": [
+          {
+            "action": "VIEW",
+            "data": [
+              {
+                "scheme": "com.devgovind.mybnapp",
+                "host": "oauthredirect",
+                "pathPrefix": "/"
+              }
+            ],
+            "category": ["BROWSABLE", "DEFAULT"]
+          },
+          {
+            "action": "VIEW",
+            "data": [
+              {
+                "scheme": "myapp",
+                "host": "oauthredirect",
+                "pathPrefix": "/"
+              }
+            ],
+            "category": ["BROWSABLE", "DEFAULT"]
+          }
+      ],
       "versionCode": 1,
       "permissions": [
         "INTERNET",
         "ACCESS_NETWORK_STATE"
       ],
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "config": {
-        "googleSignIn": {
-          "apiKey": "YOUR_API_KEY",
-          "certificateHash": "YOUR_SHA1_HASH"
-        }
-      }
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
