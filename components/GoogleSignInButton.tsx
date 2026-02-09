@@ -8,9 +8,9 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleSignInButton() {
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: 'ANDROID_CLIENT_ID',
+    androidClientId: '',
     // iosClientId: 'IOS_CLIENT_ID',
-    webClientId: 'WEB_CLIENT_ID',
+    webClientId: '',
     scopes: ['profile', 'email'],
     extraParams: {
       prompt: 'consent select_account',

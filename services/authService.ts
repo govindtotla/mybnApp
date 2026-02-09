@@ -5,8 +5,8 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 const GOOGLE_CONFIG = {
-  iosClientId: 'YOUR_IOS_CLIENT_ID',
-  androidClientId: 'YOUR_ANDROID_CLIENT_ID',
+  iosClientId: '',
+  androidClientId: '',
   scopes: ['profile', 'email'],
 };
 
