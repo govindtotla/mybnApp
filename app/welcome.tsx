@@ -45,6 +45,9 @@ const WelcomeScreen = () => {
   const handleGuestStarted = () => {
     router.replace('/business-list');
   };
+  const handleOptions = () => {
+    router.replace('../(examples)/');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -146,6 +149,15 @@ const WelcomeScreen = () => {
           >
             <Text style={styles.secondaryButtonText}>
               Explore as Guest
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={handleOptions}
+          >
+            <Text style={styles.secondaryButtonText}>
+              Options
             </Text>
           </TouchableOpacity>
         </View>
