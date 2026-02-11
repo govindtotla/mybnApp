@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import HTMLView from 'react-native-htmlview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { businessService } from '../services/api';
@@ -49,7 +48,7 @@ const BusinessDetailScreen = () => {
   const handleCall = () => {
     if (!business?.phone) return;
 
-    const phoneNumber = `tel:${business.phone.replace(/\D/g, '')}`;
+    const phoneNumber = `tel:${String(business.phone).replace(/\D/g, '')}`;
     Linking.openURL(phoneNumber).catch(() => {
       Alert.alert('Error', 'Unable to make a call. Please check your device settings.');
     });
@@ -206,7 +205,7 @@ const BusinessDetailScreen = () => {
             <View style={styles.titleContainer}>
               <Text style={styles.name}>{business.business_name}</Text>
               <View style={styles.categoryContainer}>
-                <Text style={styles.category}>{business.category}</Text>
+                <Text style={styles.category}>{business.category.name}</Text>
               </View>
             </View>
           </View>
@@ -278,10 +277,9 @@ const BusinessDetailScreen = () => {
           {/* Details Sections */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>About</Text>
-            <HTMLView
-                value={business.description}
-                stylesheet={styles}
-              />
+            <Text style={styles.description}>
+              {business.description}
+            </Text>
           </View>
 
           {/* Map (if coordinates available) */}

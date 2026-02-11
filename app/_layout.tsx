@@ -16,15 +16,20 @@ export default function RootLayout() {
   }, []);
 
   const checkAuthStatus = async () => {
-    const authenticated = await authService.isAuthenticated();
-    setIsAuthenticated(authenticated);
+    try {
+      const authenticated = await authService.isAuthenticated();
+      setIsAuthenticated(authenticated);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setIsAuthenticated(false);
+    }
   };
 
 
   if (isAuthenticated === null) {
     // Show loading screen
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.background }}>
         <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );

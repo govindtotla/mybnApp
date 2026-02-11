@@ -21,7 +21,7 @@ export const businessService = {
   // Get all businesses with pagination
   getBusinesses: async (
     page: number = 1,
-    limit: number = 2
+    limit: number = 10
   ): Promise<PaginatedResponse<Business>> => {
     try {
       await simulateDelay(800); // Simulate network delay

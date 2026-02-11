@@ -8,12 +8,12 @@ import {
   ActivityIndicator,
   Image,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Logo from '../../assets/images/mybn_icon.png';
 import { authService } from '../../services/authService';
 import { COLORS } from '../../utils/constants';
@@ -46,20 +46,6 @@ const LoginScreen = () => {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    try {
-      const user = await authService.signInWithGoogle();
-      if (user) {
-        // Navigate to main app
-        router.replace('/(tabs)');
-      }
-    } catch (error) {
-      console.error('Google sign-in failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSkip = () => {
     router.replace('/(auth)/signup');
@@ -115,18 +101,7 @@ const LoginScreen = () => {
         )}
 
         {/* Google Sign-In Button */}
-        <TouchableOpacity
-          style={[styles.socialButton, styles.googleButton]}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#DB4437" />
-          ) : (
-            <>
-              <GoogleSignInButton />
-            </>
-          )}
-        </TouchableOpacity>
+        <GoogleSignInButton />
 
         <View style={styles.divider}>
           <View style={styles.dividerLine} />

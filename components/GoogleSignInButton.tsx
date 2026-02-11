@@ -1,27 +1,32 @@
-import authService from '@/services/authService';
 import { Ionicons } from '@expo/vector-icons';
-import { Prompt } from 'expo-auth-session';
+import * as AuthSession from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { COLORS } from '../utils/constants';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleSignInButton() {
-  // Use the Expo auth redirect URI that matches Google Cloud Console configuration
-  // This is the standard Expo redirect URI format
-  const redirectUri = 'https://auth.expo.io/@developewithgovind/MYBNApp';
+  const [loading, setLoading] = useState(false);
+
+  const androidRedirectUri = AuthSession.makeRedirectUri({
+    useProxy: true,
+  });
+
+  const redirectUri = Platform.select({
+    android: androidRedirectUri,
+    ios: 'com.devgovind.mybnapp://oauthredirect/',
+    default: 'https://auth.expo.io/@developewithgovind/MYBNApp'
+  });
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID || '',
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS || '',
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB || '',
     scopes: ['profile', 'email'],
     redirectUri: redirectUri,
-    prompt: Platform.OS === 'android' ? [Prompt.Consent, Prompt.SelectAccount] : [Prompt.Consent],
   });
 
   // This runs AFTER Google login completes
@@ -39,9 +44,9 @@ export default function GoogleSignInButton() {
       })
         .then(res => res.json())
         .then(async (userInfo) => {
-          await authService.handleGoogleLogin(userInfo);
+          console.log('Google user info:', userInfo);
           // Navigate to main app after successful login
-          router.replace('/(tabs)');
+          router.replace('/business-list');
         })
         .catch(error => {
           console.error('Error fetching user info:', error);
@@ -65,8 +70,14 @@ export default function GoogleSignInButton() {
       onPress={handlePress}
       disabled={!request}
     >
-      <Ionicons name="logo-google" size={24} color="#DB4437" />
-      <Text style={styles.buttonText}>Continue with Google</Text>
+      {loading ? (
+        <Text style={styles.buttonText}>Signing in...</Text>
+      ) : (
+        <>
+          <Ionicons name="logo-google" size={24} color="#DB4437" />
+          <Text style={styles.buttonText}>Continue with Google</Text>
+        </>
+      )}
     </TouchableOpacity>
   );
 }
@@ -76,7 +87,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonText: {
     fontSize: 16,
