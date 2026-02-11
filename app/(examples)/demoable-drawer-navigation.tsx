@@ -1,7 +1,9 @@
+import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   BackHandler,
+  Button,
   Dimensions,
   StatusBar,
   StyleSheet,
@@ -246,6 +248,9 @@ export default function DrawerNavigationDemo() {
             <Text style={styles.instructionsText}>3. Tap overlay or press back to close</Text>
             <Text style={styles.instructionsText}>4. Try Android back button!</Text>
           </View>
+
+          <Button title="Examples" onPress={() => router.replace('/(examples)')} />
+
         </View>
       </View>
     );

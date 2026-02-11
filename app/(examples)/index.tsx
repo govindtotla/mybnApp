@@ -1,60 +1,163 @@
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Collapsible } from '@/components/ui/collapsible';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Button, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { Alert, BackHandler, Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS } from '../../utils/constants';
 
 export default function Index() {
+
+  useEffect(() => {
+          // Handle back button press
+          const backAction = () => {
+            router.replace('/welcome')
+            return true; // Prevent default back behavior
+          };
+
+          // Add event listener
+          const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+          );
+
+          // Cleanup
+          return () => backHandler.remove();
+        }, []);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Examples
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>Checkout all the React Native UI examples</ThemedText>
-      <Collapsible title="Demoable List View Component">
-          <ThemedText>
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          </ThemedText>
-      </Collapsible>
+        <SafeAreaView style={styles.container}>
+          <LinearGradient
+            colors={[COLORS.primary, '#6AA8FF']}
+            style={styles.header}
+          >
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.replace('/welcome')}
+            >
+              <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+            </TouchableOpacity>
+            <View style={styles.headerContent}>
+              <Text style={styles.welcomeText}>Examples</Text>
+              <Text style={styles.subtitle}>
+                React Native UI examples
+              </Text>
+            </View>
+          </LinearGradient>
 
-      <Button title="Demoable List View" onPress={() => router.replace('/demoable-list-view')} />
+      <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            <Collapsible title="Collops & Expend Component">
+                <ThemedText>
+                what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
+                <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
+                </ThemedText>
 
-      <Button title="Demoable Tab Nav" onPress={() => router.replace('/demoable-tab-navigation')} />
+                <Button title="I am Button" onPress={() => Alert.alert('Button', 'Button Pressed') } />
+            </Collapsible>
 
-      <Button title="Demoable Drawer Navigation" onPress={() => router.replace('/demoable-drawer-navigation')} />
+          <View style={styles.innerContent}>
+            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-list-view')}>
+              <Text style={styles.buttonText}>Demoable List View</Text>
+            </TouchableOpacity>
 
-    </ParallaxScrollView>
+            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-tab-navigation')}>
+              <Text style={styles.buttonText}>Demoable Tab Nav</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-drawer-navigation')}>
+              <Text style={styles.buttonText}>Demoable Drawer Navigation</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => router.replace('/business-list')}>
+              <Text style={styles.buttonText}>Demoable FlatList & ScrollView</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-registration')}>
+              <Text style={styles.buttonText}>Demoable Form Elements</Text>
+            </TouchableOpacity>
+
+          </View>
+          </View>
+
+        </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 40,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 60,
+    left: 24,
+    zIndex: 1,
+  },
+  headerContent: {
+    alignItems: 'center',
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: COLORS.white,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  innerContent: {
+    paddingTop: 40,
+  },
+  content: {
+    padding: 24,
+    paddingTop: 40,
+  },
   headerImage: {
     color: '#808080',
-    bottom: -90,
-    left: -35,
+    bottom: -0,
+    left: -0,
     position: 'absolute',
   },
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
+  },
+  button: {
+    marginTop:4,
+    backgroundColor: '#5ea8fc',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
