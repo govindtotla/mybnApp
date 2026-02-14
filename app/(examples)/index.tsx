@@ -88,7 +88,7 @@ export default function Index() {
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-stopwatch')}>
-                <Text style={styles.buttonText}>Stop Watch</Text>
+                <Text style={styles.buttonText}>Tools</Text>
               </TouchableOpacity>
 
             </View>

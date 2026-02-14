@@ -96,4 +96,17 @@ export const businessService = {
   },
 };
 
+export const generalService = {
+  fetchRate: async (from:string, to:string) => {
+    try {
+      const res = await axios.get(
+        `https://api.exchangerate-api.com/v4/latest/${from}`
+      );
+      return res.data.rates[to];
+    } catch (error) {
+      console.log('Error fetching rate:', error);
+    }
+  }
+};
+
 export default api;
