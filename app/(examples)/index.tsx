@@ -62,28 +62,37 @@ export default function Index() {
                 <Button title="I am Button" onPress={() => Alert.alert('Button', 'Button Pressed') } />
             </Collapsible>
 
-          <View style={styles.innerContent}>
-            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-list-view')}>
-              <Text style={styles.buttonText}>Demoable List View</Text>
-            </TouchableOpacity>
+            <View style={styles.innerContent}>
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-list-view')}>
+                <Text style={styles.buttonText}>Demoable List View</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-tab-navigation')}>
-              <Text style={styles.buttonText}>Demoable Tab Nav</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-tab-navigation')}>
+                <Text style={styles.buttonText}>Demoable Tab Nav</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-drawer-navigation')}>
-              <Text style={styles.buttonText}>Demoable Drawer Navigation</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-drawer-navigation')}>
+                <Text style={styles.buttonText}>Demoable Drawer Navigation</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.replace('/business-list')}>
-              <Text style={styles.buttonText}>Demoable FlatList & ScrollView</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/business-list')}>
+                <Text style={styles.buttonText}>Demoable FlatList & ScrollView</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-registration')}>
-              <Text style={styles.buttonText}>Demoable Form Elements</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-registration')}>
+                <Text style={styles.buttonText}>Demoable Form Elements</Text>
+              </TouchableOpacity>
 
-          </View>
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-animation')}>
+                <Text style={styles.buttonText}>Animation</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.button} onPress={() => router.replace('/demoable-stopwatch')}>
+                <Text style={styles.buttonText}>Stop Watch</Text>
+              </TouchableOpacity>
+
+            </View>
+
           </View>
 
         </ScrollView>
