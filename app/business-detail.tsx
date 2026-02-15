@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import RenderHtml from 'react-native-render-html';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { businessService } from '../services/api';
@@ -115,15 +116,15 @@ const BusinessDetailScreen = () => {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Ionicons name="star" size={20} color="#FFD700" />
+          <Ionicons key={i} name="star" size={20} color="#FFD700" />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
-          <Ionicons name="star-half" size={20} color="#FFD700" />
+          <Ionicons key={i} name="star-half" size={20} color="#FFD700" />
         );
       } else {
         stars.push(
-          <Ionicons name="star-outline" size={20} color="#FFD700" />
+          <Ionicons key={i} name="star-outline" size={20} color="#FFD700" />
         );
       }
     }
@@ -278,7 +279,9 @@ const BusinessDetailScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>About</Text>
             <Text style={styles.description}>
-              {business.description}
+              <RenderHtml
+                source={{ html: business.description }}
+              />
             </Text>
           </View>
 

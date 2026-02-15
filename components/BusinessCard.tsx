@@ -37,15 +37,15 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business, onPress }) => {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Ionicons name="star" size={16} color="#FFD700" />
+          <Ionicons key={i} name="star" size={16} color="#FFD700" />
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
-          <Ionicons name="star-half" size={16} color="#FFD700" />
+          <Ionicons key={i} name="star-half" size={16} color="#FFD700" />
         );
       } else {
         stars.push(
-          <Ionicons name="star-outline" size={16} color="#FFD700" />
+          <Ionicons key={i} name="star-outline" size={16} color="#FFD700" />
         );
       }
     }
@@ -54,13 +54,19 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business, onPress }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity key={business.id} style={styles.card} onPress={onPress} activeOpacity={0.7}>
       {/* Business Image */}
-      <Image
-        source={{ uri: business.featured_banner.image }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      { business.featured_banner.image ? (
+        <Image
+          source={{ uri: business.featured_banner.image }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      ) : (
+        <View style={styles.bannerPlaceHolder}>
+          <Text>loading banners...</Text>
+        </View>
+      )}
 
       {/* Category Badge */}
       <View style={styles.categoryBadge}>
@@ -92,7 +98,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business, onPress }) => {
         </View>
 
         {/* Description */}
-        <Text style={styles.description} numberOfLines={1}>
+        <Text style={styles.description} numberOfLines={2}>
           {decodeHtmlEntities(business.description)}
         </Text>
 
@@ -228,6 +234,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.primary,
   },
+  bannerPlaceHolder: {
+    flex: 1, // Ensures the container takes up available space
+    justifyContent: 'center', // Centers children vertically in a column (default flex direction)
+    alignItems: 'center',
+    height:250,
+    backgroundColor:'#7ae3f8'
+  }
 });
 
 export default BusinessCard;

@@ -72,7 +72,7 @@ const BusinessListScreen = () => {
         setLoadingMore(true);
       }
 
-      const response = await businessService.getBusinesses(pageToLoad, 2);
+      const response = await businessService.getBusinesses(pageToLoad, 6);
 
       if (reset) {
         setBusinesses(response.items);
