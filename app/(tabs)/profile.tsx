@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ProtectedRoute from '../../components/ProtectedRoute';
 import { authService, User } from '../../services/authService';
 import { COLORS } from '../../utils/constants';
 
@@ -81,96 +82,133 @@ const ProfileScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Profile Header */}
-        <View style={styles.header}>
-          <View style={styles.avatarContainer}>
-            {user.photo ? (
-              <Image source={{ uri: user.photo }} style={styles.avatar} />
-            ) : (
-              <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                <Text style={styles.avatarText}>
-                  {user.name.charAt(0).toUpperCase()}
-                </Text>
+    <ProtectedRoute>
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Profile Header */}
+          <View style={styles.header}>
+            <View style={styles.avatarContainer}>
+              {user.photo ? (
+                <Image source={{ uri: user.photo }} style={styles.avatar} />
+              ) : (
+                <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                  <Text style={styles.avatarText}>
+                    {user.name.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <Text style={styles.userName}>{user.name}</Text>
+            <Text style={styles.userEmail}>{user.email}</Text>
+
+            <View style={styles.authTypeBadge}>
+              <Ionicons
+                name={user.authType === 'apple' ? 'logo-apple' : 'logo-google'}
+                size={16}
+                color={COLORS.white}
+              />
+              <Text style={styles.authTypeText}>
+                {user.authType === 'apple' ? 'Apple ID' : 'Google Account'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Business</Text>
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/business-list')}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="list-circle-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Listings</Text>
               </View>
-            )}
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/business-profile')}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="business-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Business Details</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/business-banners')}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="image-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Banners</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/business-products')}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="cart-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Products</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
           </View>
 
-          <Text style={styles.userName}>{user.name}</Text>
-          <Text style={styles.userEmail}>{user.email}</Text>
+          {/* App Settings */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Preferences</Text>
 
-          <View style={styles.authTypeBadge}>
-            <Ionicons
-              name={user.authType === 'apple' ? 'logo-apple' : 'logo-google'}
-              size={16}
-              color={COLORS.white}
-            />
-            <Text style={styles.authTypeText}>
-              {user.authType === 'apple' ? 'Apple ID' : 'Google Account'}
-            </Text>
+            <TouchableOpacity style={styles.menuItem}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="language-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Language</Text>
+              </View>
+              <Text style={styles.menuItemValue}>English</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="moon-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Dark Mode</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
           </View>
-        </View>
 
-        {/* App Settings */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preferences</Text>
+          {/* Support */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Support</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="language-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Language</Text>
-            </View>
-            <Text style={styles.menuItemValue}>English</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="help-circle-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Help & Support</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="moon-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Dark Mode</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Support */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Support</Text>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="help-circle-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Help & Support</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemContent}>
-              <Ionicons name="document-text-outline" size={24} color={COLORS.text.primary} />
-              <Text style={styles.menuItemText}>Terms & Policies</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Sign Out */}
-        <TouchableOpacity
-          style={[styles.menuItem, styles.signOutButton]}
-          onPress={handleSignOut}
-        >
-          <View style={styles.menuItemContent}>
-            <Ionicons name="log-out-outline" size={24} color={COLORS.error} />
-            <Text style={[styles.menuItemText, styles.signOutText]}>Sign Out</Text>
+            <TouchableOpacity style={styles.menuItem}>
+              <View style={styles.menuItemContent}>
+                <Ionicons name="document-text-outline" size={24} color={COLORS.text.primary} />
+                <Text style={styles.menuItemText}>Terms & Policies</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.text.light} />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
 
-        {/* App Version */}
-        <View style={styles.versionContainer}>
-          <Text style={styles.versionText}>Business Directory v1.0.0</Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          {/* Sign Out */}
+          <TouchableOpacity
+            style={[styles.menuItem, styles.signOutButton]}
+            onPress={handleSignOut}
+          >
+            <View style={styles.menuItemContent}>
+              <Ionicons name="log-out-outline" size={24} color={COLORS.error} />
+              <Text style={[styles.menuItemText, styles.signOutText]}>Sign Out</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* App Version */}
+          <View style={styles.versionContainer}>
+            <Text style={styles.versionText}>MYBN v1.0.0</Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </ProtectedRoute>
   );
 };
 

@@ -109,4 +109,44 @@ export const generalService = {
   }
 };
 
+// OTP Authentication Service
+export const otpService = {
+  // Send OTP to mobile number
+  sendOTP: async (mobileNumber: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      const response = await api.post(API_CONFIG.ENDPOINTS.SEND_OTP, {
+        mobile_no: mobileNumber
+      });
+
+      return {
+        success: response.data.success,
+        message: response.data.message || 'OTP sent successfully'
+      };
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      throw new Error(error.response?.data?.message || 'Failed to send OTP');
+    }
+  },
+
+  // Verify OTP
+  verifyOTP: async (mobileNumber: string, otp: string): Promise<{ success: boolean; user: any; token: string; message: string }> => {
+    try {
+      const response = await api.post(API_CONFIG.ENDPOINTS.VERIFY_OTP, {
+        mobile_no: mobileNumber,
+        otp: otp
+      });
+
+      return {
+        success: response.data.success,
+        user: response.data.user,
+        token: response.data.token,
+        message: response.data.message || 'OTP verified successfully'
+      };
+    } catch (error: any) {
+      console.error('Error verifying OTP:', error);
+      throw new Error(error.response?.data?.message || 'Failed to verify OTP');
+    }
+  },
+};
+
 export default api;

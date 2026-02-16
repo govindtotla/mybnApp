@@ -48,7 +48,7 @@ const BusinessListScreen = () => {
   useEffect(() => {
     // Handle back button press
     const backAction = () => {
-      router.replace('/welcome')
+      router.replace('/(tabs)/profile')
       return true; // Prevent default back behavior
     };
 

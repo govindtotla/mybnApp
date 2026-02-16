@@ -1,8 +1,7 @@
 // services/authService.ts
 import * as AppleAuthentication from 'expo-apple-authentication';
-import * as Google from 'expo-auth-session/providers/google';
 import * as SecureStore from 'expo-secure-store';
-import { Platform } from 'react-native';
+import api, { otpService } from './api';
 
 // Check if SecureStore is available
 const isSecureStoreAvailable = () => {
@@ -24,7 +23,7 @@ const GOOGLE_CONFIG = {
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   USER_DATA: 'user_data',
-  AUTH_TYPE: 'apple | google',
+  AUTH_TYPE: 'apple | google | otp',
 };
 
 // User type
@@ -33,7 +32,7 @@ export interface User {
   email: string;
   name: string;
   photo?: string;
-  authType: 'apple' | 'google';
+  authType: 'apple' | 'google' | 'otp';
 }
 
 export const authService = {
@@ -45,100 +44,6 @@ export const authService = {
       return await AppleAuthentication.isAvailableAsync();
     } catch {
       return false;
-    }
-  },
-
-  signInWithApple: async (): Promise<User | null> => {
-    try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
-
-      if (!credential.user) return null;
-
-      const user: User = {
-        id: credential.user,
-        email: credential.email ?? '',
-        name: credential.fullName
-          ? `${credential.fullName.givenName ?? ''} ${credential.fullName.familyName ?? ''}`.trim()
-          : 'Apple User',
-        authType: 'apple',
-      };
-
-      await authService.saveUserData(user);
-      return user;
-    } catch (error: any) {
-      if (error.code !== 'ERR_CANCELED') {
-        console.error('Apple Sign-In error:', error);
-      }
-      return null;
-    }
-  },
-
-  // ---------------------------
-  // Google Sign-In handler
-  // (called AFTER auth-session succeeds)
-  // ---------------------------
-  handleGoogleLogin: async (googleUser: any): Promise<User> => {
-    const user: User = {
-      id: googleUser.sub,
-      email: googleUser.email,
-      name: googleUser.name,
-      photo: googleUser.picture,
-      authType: 'google',
-    };
-
-    await authService.saveUserData(user);
-    return user;
-  },
-
-   // Sign in with Google
-  signInWithGoogle: async (): Promise<User | null> => {
-    try {
-      const config = Platform.select({
-        ios: { clientId: GOOGLE_CONFIG.iosClientId },
-        android: { clientId: GOOGLE_CONFIG.androidClientId },
-        web: { clientId: GOOGLE_CONFIG.webClientId },
-      });
-
-      if (!config?.clientId) {
-        const platform = Platform.OS;
-        throw new Error(`Google Client ID not configured for ${platform} platform. Please add EXPO_PUBLIC_GOOGLE_CLIENT_ID_${platform.toUpperCase()} to your .env file`);
-      }
-
-      // Start Google authentication flow
-      const result = await Google.logInAsync({
-        ...config,
-        scopes: GOOGLE_CONFIG.scopes,
-      });
-
-      if (result.type === 'success') {
-        const { user } = result;
-
-        // Create user object
-        const authUser: User = {
-          id: user.id,
-          email: user.email,
-          name: user.name || '',
-          photo: user.photoUrl || undefined,
-          authType: 'google',
-        };
-
-        // Save to secure storage
-        await authService.saveUserData(authUser);
-
-        return authUser;
-      } else {
-        // User canceled
-        console.log('Google Sign-In was canceled');
-        return null;
-      }
-    } catch (error) {
-      console.error('Google Sign-In error:', error);
-      return null;
     }
   },
 
@@ -196,10 +101,131 @@ export const authService = {
       await Promise.all([
         SecureStore.deleteItemAsync(STORAGE_KEYS.USER_DATA),
         SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TYPE),
+        SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN),
       ]);
     } catch (error) {
       console.error('Error signing out:', error);
       // Continue even if delete fails
+    }
+  },
+
+  // ---------------------------
+  // JWT Token Management
+  // ---------------------------
+  saveToken: async (token: string): Promise<void> => {
+    try {
+      if (!isSecureStoreAvailable()) {
+        console.warn('SecureStore is not available. Token will not be persisted.');
+        return;
+      }
+      await SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token);
+    } catch (error: any) {
+      console.error('Error saving token:', error);
+      if (error?.message?.includes('not a function') || error?.message?.includes('not available')) {
+        console.warn('SecureStore methods are not available.');
+      }
+    }
+  },
+
+  getToken: async (): Promise<string | null> => {
+    try {
+      if (!isSecureStoreAvailable()) {
+        console.warn('SecureStore is not available. Token cannot be retrieved.');
+        return null;
+      }
+      return await SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
+    } catch (error: any) {
+      console.error('Error getting token:', error);
+      return null;
+    }
+  },
+
+  clearToken: async (): Promise<void> => {
+    try {
+      if (isSecureStoreAvailable()) {
+        await SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN);
+      }
+    } catch (error) {
+      console.error('Error clearing token:', error);
+    }
+  },
+
+  // Validate if token exists and is valid
+  hasValidSession: async (): Promise<boolean> => {
+    try {
+      const token = await authService.getToken();
+      return !!(token && token.length > 0);
+    } catch (error) {
+      console.error('Error checking session:', error);
+      return false;
+    }
+  },
+
+  // Add token to API requests
+  setAuthToken: (token: string | null): void => {
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete api.defaults.headers.common['Authorization'];
+    }
+  },
+
+  // Refresh token (if needed in future)
+  refreshSession: async (): Promise<boolean> => {
+    try {
+      const token = await authService.getToken();
+      if (token) {
+        authService.setAuthToken(token);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error refreshing session:', error);
+      return false;
+    }
+  },
+
+  // ---------------------------
+  // OTP Authentication
+  // ---------------------------
+  sendOTP: async (mobileNumber: string): Promise<boolean> => {
+    try {
+      const result = await otpService.sendOTP(mobileNumber);
+      return result.success;
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      throw error;
+    }
+  },
+
+  verifyOTP: async (mobileNumber: string, otp: string): Promise<User | null> => {
+    try {
+      const result = await otpService.verifyOTP(mobileNumber, otp);
+
+      if (result.success && result.user) {
+        const user: User = {
+          id: result.user.id || mobileNumber,
+          email: result.user.email || '',
+          name: result.user.name || `User ${mobileNumber}`,
+          photo: result.user.photo || undefined,
+          authType: 'otp',
+        };
+
+        // Save user data and JWT token
+        await authService.saveUserData(user);
+        if (result.token) {
+          await authService.saveToken(result.token);
+          // Set the token in API headers for future requests
+          authService.setAuthToken(result.token);
+        }
+
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      throw error;
     }
   },
 };

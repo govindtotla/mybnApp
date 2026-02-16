@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -13,9 +13,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import banner from '../assets/images/mybn_banner.jpg';
+import { authService } from '../services/authService';
 import { APP_CONSTANTS, COLORS } from '../utils/constants';
 
 const WelcomeScreen = () => {
+  const [isCheckingSession, setIsCheckingSession] = useState(false);
   const features = [
     {
       icon: 'business-outline',
@@ -39,8 +41,39 @@ const WelcomeScreen = () => {
     },
   ];
 
-  const handleGetStarted = () => {
-    router.replace('/(auth)/signup');
+  const handleGetStarted = async () => {
+    try {
+      setIsCheckingSession(true);
+
+      // Check if user has a valid session
+      const hasValidSession = await authService.hasValidSession();
+
+      if (hasValidSession) {
+        // Set the token in API headers
+        const token = await authService.getToken();
+        if (token) {
+          authService.setAuthToken(token);
+        }
+
+        // Check if user data exists
+        const user = await authService.getCurrentUser();
+
+        if (user) {
+          // Navigate to profile if user is authenticated
+          router.replace('/(tabs)/profile');
+          return;
+        }
+      }
+
+      // Navigate to login if no valid session
+      router.replace('/(auth)/login');
+    } catch (error) {
+      console.error('Error checking session:', error);
+      // Navigate to login on error
+      router.replace('/(auth)/login');
+    } finally {
+      setIsCheckingSession(false);
+    }
   };
   const handleGuestStarted = () => {
     router.replace('/business-list');
@@ -124,9 +157,10 @@ const WelcomeScreen = () => {
         {/* CTA Section */}
         <View style={styles.ctaSection}>
           <TouchableOpacity
-            style={styles.ctaButton}
+            style={[styles.ctaButton, isCheckingSession && styles.buttonDisabled]}
             onPress={handleGetStarted}
             activeOpacity={0.8}
+            disabled={isCheckingSession}
           >
             <LinearGradient
               colors={[COLORS.primary, COLORS.secondary]}
@@ -134,12 +168,16 @@ const WelcomeScreen = () => {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              <Text style={styles.ctaButtonText}>Get Started</Text>
-              <Ionicons
-                name="arrow-forward"
-                size={24}
-                color={COLORS.text.inverted}
-              />
+              <Text style={styles.ctaButtonText}>
+                {isCheckingSession ? 'Checking...' : 'Get Started'}
+              </Text>
+              {!isCheckingSession && (
+                <Ionicons
+                  name="arrow-forward"
+                  size={24}
+                  color={COLORS.text.inverted}
+                />
+              )}
             </LinearGradient>
           </TouchableOpacity>
 
@@ -152,14 +190,14 @@ const WelcomeScreen = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.secondaryButton}
             onPress={handleOptions}
           >
             <Text style={styles.secondaryButtonText}>
               Options
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Footer */}
@@ -322,6 +360,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
   gradientButton: {
     flexDirection: 'row',
