@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import * as WebBrowser from "expo-web-browser";
 import React, { useState } from 'react';
 import {
   Image,
@@ -40,6 +41,16 @@ const WelcomeScreen = () => {
       description: 'Get directions to businesses with integrated maps',
     },
   ];
+  const openTerms = async () => {
+    await WebBrowser.openBrowserAsync(
+      "https://mybn.in/terms"
+    );
+  };
+  const openPrivacy = async () => {
+    await WebBrowser.openBrowserAsync(
+      "https://mybn.in/privacy-policy"
+    );
+  };
 
   const handleGetStarted = async () => {
     try {
@@ -144,7 +155,7 @@ const WelcomeScreen = () => {
               { number: '3', text: 'Get directions or contact businesses directly from the app' },
               { number: '4', text: 'Save your favorite businesses for quick access' },
             ].map((step, index) => (
-              <View key={index} style={styles.step}>
+              <View style={styles.step} key={index}>
                 <View style={styles.stepNumber}>
                   <Text style={styles.stepNumberText}>{step.number}</Text>
                 </View>
@@ -190,20 +201,22 @@ const WelcomeScreen = () => {
             </Text>
           </TouchableOpacity>
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={styles.secondaryButton}
             onPress={handleOptions}
           >
             <Text style={styles.secondaryButtonText}>
               Options
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            By continuing, you agree to our Terms of Service and Privacy Policy
+            By continuing, you agree to our{' '}
+            <Text onPress={openTerms} style={styles.link}>Terms of Service</Text> and{' '}
+            <Text onPress={openPrivacy} style={styles.link}>Privacy Policy</Text>
           </Text>
           <Text style={styles.copyright}>
             © 2026 {APP_CONSTANTS.APP_NAME}. All rights reserved.
@@ -402,6 +415,10 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.text.light,
     textAlign: 'center',
+  },
+    link: {
+    color: COLORS.primary,
+    textDecorationLine: 'underline',
   },
 });
 

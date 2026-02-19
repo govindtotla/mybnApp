@@ -57,11 +57,3 @@ export const API_CONFIG = {
     'Education',
     'Healthcare',
   ];
-
-  // Screen names
-  export const SCREENS = {
-    SPLASH: 'Splash',
-    WELCOME: 'Welcome',
-    BUSINESS_LIST: 'BusinessList',
-    BUSINESS_DETAIL: 'BusinessDetail',
-  } as const;
