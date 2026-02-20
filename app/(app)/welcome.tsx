@@ -13,9 +13,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import banner from '../assets/images/mybn_banner.jpg';
-import { authService } from '../services/authService';
-import { APP_CONSTANTS, COLORS } from '../utils/constants';
+import banner from '../../assets/images/mybn_banner.jpg';
+import { authService } from '../../services/authService';
+import { APP_CONSTANTS, COLORS } from '../../utils/constants';
 
 const WelcomeScreen = () => {
   const [isCheckingSession, setIsCheckingSession] = useState(false);
@@ -201,14 +201,14 @@ const WelcomeScreen = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.secondaryButton}
             onPress={handleOptions}
           >
             <Text style={styles.secondaryButtonText}>
               Options
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Footer */}

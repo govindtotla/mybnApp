@@ -14,12 +14,12 @@ import {
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BusinessCard from '../components/BusinessCard';
-import LoadingSpinner from '../components/LoadingSpinner';
-import SearchBar from '../components/SearchBar';
-import { businessService } from '../services/api';
-import { CATEGORIES, COLORS } from '../utils/constants';
-import { Business } from '../utils/types';
+import BusinessCard from '../../components/BusinessCard';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import SearchBar from '../../components/SearchBar';
+import { businessService } from '../../services/api';
+import { CATEGORIES, COLORS } from '../../utils/constants';
+import { Business } from '../../utils/types';
 
 const BusinessListScreen = () => {
   const params = useLocalSearchParams();

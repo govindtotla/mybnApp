@@ -1,11 +1,13 @@
 import { Stack } from 'expo-router';
+import { Drawer } from "expo-router/drawer";
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { authService } from '../services/authService';
-import { COLORS } from '../utils/constants';
+import CustomDrawer from "../../components/CustomDrawer";
+import { authService } from '../../services/authService';
+import { COLORS } from '../../utils/constants';
 
 export default function RootLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -56,17 +58,26 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style="auto" />
+        <Drawer
+            drawerContent={(props) => <CustomDrawer {...props} />}
+            screenOptions={{
+              headerTitleAlign: "center",
+            }}
+          >
         <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="splash" />
+          <Drawer.Screen name="splash" />
           {!isAuthenticated ? (
             // Auth screens
-            <Stack.Screen name="(auth)" />
+            <Drawer.Screen name="(auth)" />
           ) : (
             <>
-              <Stack.Screen name="(app)" />
+              <Drawer.Screen name="welcome" />
+              <Drawer.Screen name="business-list" />
+              <Drawer.Screen name="business-detail" />
             </>
           )}
         </Stack>
+        </Drawer>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

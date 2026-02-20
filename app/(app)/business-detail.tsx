@@ -16,10 +16,10 @@ import {
 } from 'react-native';
 import RenderHtml from 'react-native-render-html';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { businessService } from '../services/api';
-import { COLORS } from '../utils/constants';
-import { Business } from '../utils/types';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import { businessService } from '../../services/api';
+import { COLORS } from '../../utils/constants';
+import { Business } from '../../utils/types';
 
 const BusinessDetailScreen = () => {
   const params = useLocalSearchParams();

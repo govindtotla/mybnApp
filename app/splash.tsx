@@ -41,7 +41,7 @@ const SplashScreen = () => {
 
     // Navigate after delay
     const timer = setTimeout(() => {
-      router.replace('/welcome');
+      router.replace('/(app)/welcome');
     }, 2500);
 
     return () => clearTimeout(timer);
